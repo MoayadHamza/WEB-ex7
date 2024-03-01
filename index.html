@@ -1,43 +1,141 @@
 <!DOCTYPE html>
-<html lang="en">
 
 <head>
-  <meta charset="UTF-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Document</title>
-  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet" />
-  <link rel="stylesheet" href="inc/loading.css" />
+  <title>Image Browser</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
   <style>
-    .td-img{
-      padding:0px;
-      width: 106px;
-      height: 60px;
+    body,
+    html {
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
-    body{
-      overflow-y: scroll;
+
+    .img-container {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background-color: #f7edde;
+      margin: auto;
+      border-radius: 1px;
+      padding: 20px;
+      max-width: 800px;
+      max-height: 700px;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .smallImg-container {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      padding: 8px;
+      margin-bottom: 20px;
+      background-color: #f7edde;
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    .smallImg {
+      margin: 0 10px;
+      cursor: pointer;
+      border-radius: 5px;
+      transition: transform 0.3s ease;
+    }
+
+    .smallImg:hover {
+      transform: scale(1.1);
+    }
+
+
+    .start-img-container {
+      position: absolute;
+      height: 400px;
+      width: 100%;
+      margin-top: 20px;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .start-img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      border-radius: 10px;
+    }
+
+    .arrows {
+      position: absolute;
+      display: flex;
+      justify-content: space-between;
+      width: 80%;
+      top: 0;
+      transform: translateY(-50%);
+      margin: 300px;
+    }
+
+    .arrow {
+      font-size: 40px;
+      font-style: italic;
+      cursor: pointer;
+    }
+
+    .arrow:hover {
+      color: #a5c4ad;
+      transform: scale(1.2);
     }
   </style>
-  <script src="https://code.jquery.com/jquery-latest.min.js"></script>
-  <script src="inc/scripts.js"></script>
+  <script>
+    angular
+      .module("imageBrowserApp", [])
+      .controller("ImageController", function ($scope) {
+        $scope.images = [];
+        for (let i = 50; i <= 59; i++) {
+          $scope.images.push({
+            id: i,
+            imgUrl: `https://picsum.photos/id/${i}/350/350`,
+            smallImgUrl: `https://picsum.photos/id/${i}/50/50`,
+          });
+        }
+
+        $scope.selectedImgIndex = 0;
+
+        $scope.selectImg = function (index) {
+          $scope.selectedImgIndex = index;
+        };
+
+        $scope.nextImg = function () {
+          $scope.selectedImgIndex = ($scope.selectedImgIndex + 1) % $scope.images.length;
+        };
+
+        $scope.prevImg = function () {
+          $scope.selectedImgIndex = ($scope.selectedImgIndex - 1 + $scope.images.length) % $scope.images.length;
+        };
+      });
+  </script>
 </head>
 
-<body>
-  <div class="container">
-    <h1>My Products</h1>
-    <div class="d-flex">
-      <div id="pager"></div>
-      <div class="ml-auto">
-        <div class="lds-ellipsis d-none">
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-        </div>
-      </div>
+<body ng-app="imageBrowserApp" ng-controller="ImageController">
+  <div class="img-container">
+    <div class="smallImg-container">
+      <img ng-repeat="image in images" ng-src="{{image.smallImgUrl}}" alt="SmallImg" ng-click="selectImg($index)" class="smallImg" />
     </div>
-
-    <div id="app"></div>
+    <div class="start-Img-container">
+      <img ng-src="{{images[selectedImgIndex].imgUrl}}" alt="Selected" class="start-img" />
+    </div>
+    <div class="arrows">
+      <span class="arrow" ng-click="prevImg()">
+        &larr;
+      </span>
+      <span class="arrow" ng-click="nextImg()">
+        &rarr;
+      </span>
+    </div>
   </div>
 </body>
 
